@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>削除確認 - 画像メモ</title>
+</head>
+<body>
+    <div th:fragment="content" class="container">
+        <div class="delete-confirm">
+            <div th:replace="~{fragments/common :: page-title('warning', '#EF4444', '削除確認')}"></div>
+
+            <div class="delete-confirm__card">
+                <div class="delete-confirm__image">
+                    <img th:src="@{/memos/{id}/image(id=${memo.id})}"
+                         th:alt="${memo.title}"
+                         class="detail-image">
+                </div>
+
+                <h2 class="delete-confirm__title" th:text="${memo.title}"></h2>
+                <p class="delete-confirm__description" th:text="${memo.description}"></p>
+
+                <div class="alert alert--danger" role="alert">
+                    <strong>この操作は取り消せません。</strong><br>
+                    本当にこの画像メモを削除しますか?
+                </div>
+            </div>
+
+            <div class="delete-confirm__actions">
+                <form th:action="@{/memos/{id}/delete(id=${memo.id})}" method="post">
+                    <button type="submit" class="btn btn--danger btn--large btn--full" aria-label="削除を実行">
+                        <span class="material-icons" aria-hidden="true">delete</span>
+                        削除する
+                    </button>
+                </form>
+
+                <a th:href="@{/memos/{id}(id=${memo.id})}"
+                   class="btn btn--secondary btn--large btn--full"
+                   aria-label="削除をキャンセルして詳細に戻る">
+                    <span class="material-icons" aria-hidden="true">arrow_back</span>
+                    キャンセル
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

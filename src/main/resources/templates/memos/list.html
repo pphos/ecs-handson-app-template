@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>画像メモ一覧</title>
+</head>
+<body>
+    <div th:fragment="content" class="container container--wide">
+        <header class="header">
+            <div th:replace="~{fragments/common :: page-title-large('photo_library', '#FF9800', '画像メモ一覧')}"></div>
+            <div class="header__actions">
+                <a href="/memos/new" class="btn btn--primary" aria-label="新規画像メモ作成">
+                    <span class="material-icons" aria-hidden="true">add_photo_alternate</span>
+                    新規作成
+                </a>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn--secondary" aria-label="ログアウト">
+                        <span class="material-icons" aria-hidden="true">logout</span>
+                        ログアウト
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/common :: alert-success(${successMessage})}"></div>
+        <div th:replace="~{fragments/common :: alert-danger(${errorMessage})}"></div>
+
+        <main>
+            <div class="memo-grid">
+                <article th:each="memo : ${memos.content}" class="memo-card">
+                    <a th:href="@{/memos/{id}(id=${memo.id})}"
+                       class="memo-card__image-link"
+                       th:aria-label="'画像メモ: ' + ${memo.title} + 'を表示'">
+                        <img th:src="@{/memos/{id}/image(id=${memo.id})}"
+                             th:alt="${memo.title}"
+                             class="memo-card__image">
+                    </a>
+                    <div class="memo-card__content">
+                        <h2 class="memo-card__title" th:text="${memo.title}"></h2>
+                        <p class="memo-card__description" th:text="${#strings.abbreviate(memo.description, 100)}"></p>
+                        <div class="memo-card__meta">
+                            <span class="material-icons" aria-label="作成日時">schedule</span>
+                            <time th:datetime="${memo.createdAt}"
+                                  th:text="${#temporals.format(memo.createdAt, 'yyyy-MM-dd HH:mm')}">
+                            </time>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </main>
+
+        <nav th:if="${memos.totalPages > 1}" class="pagination" aria-label="ページネーション" role="navigation">
+            <span th:each="i : ${#numbers.sequence(0, memos.totalPages - 1)}">
+                <a th:href="@{/memos(page=${i})}"
+                   th:text="${i + 1}"
+                   th:aria-label="'ページ ' + ${i + 1}"
+                   th:aria-current="${i == memos.number} ? 'page' : null"
+                   th:class="${i == memos.number} ? 'pagination__link pagination__link--active' : 'pagination__link'"></a>
+            </span>
+        </nav>
+    </div>
+</body>
+</html>

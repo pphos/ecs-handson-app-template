@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content})}">
+<head>
+    <title th:text="${memo.title} + ' - 画像メモ'">画像メモ詳細</title>
+</head>
+<body>
+    <div th:fragment="content" class="container">
+        <header>
+            <h1>
+                <span class="material-icons" style="font-size: 2rem; vertical-align: middle; color: #FF9800;" aria-hidden="true">image</span>
+                <span th:text="${memo.title}"></span>
+            </h1>
+            <div class="detail-meta">
+                <span class="material-icons" aria-label="作成日時">event</span>
+                <time th:datetime="${memo.createdAt}"
+                      th:text="${#temporals.format(memo.createdAt, 'yyyy-MM-dd HH:mm:ss')}">
+                </time>
+            </div>
+        </header>
+
+        <main>
+            <img th:src="@{/memos/{id}/image(id=${memo.id})}"
+                 th:alt="${memo.title}"
+                 class="detail-image">
+
+            <div class="detail-description" th:text="${memo.description}"></div>
+        </main>
+
+        <div class="detail-actions">
+            <a href="/memos" class="btn btn--secondary" aria-label="一覧に戻る">
+                <span class="material-icons" aria-hidden="true">arrow_back</span>
+                一覧に戻る
+            </a>
+            <a th:href="@{/memos/{id}/delete-confirm(id=${memo.id})}"
+               class="btn btn--danger"
+               aria-label="このメモを削除">
+                <span class="material-icons" aria-hidden="true">delete</span>
+                削除
+            </a>
+        </div>
+    </div>
+</body>
+</html>

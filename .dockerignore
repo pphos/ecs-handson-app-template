@@ -1,0 +1,65 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+build/
+target/
+*.jar
+*.war
+*.ear
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle
+.gradle/
+gradle-wrapper.properties
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~
+
+# Docker
+Dockerfile
+.dockerignore
+compose.yml
+docker-compose.yml
+
+# Documentation
+README.md
+CLAUDE.md
+memo.md
+worklog/
+
+# Scripts
+scripts/
+Makefile
+
+# Database migration files (handled by Flyway container)
+migration/

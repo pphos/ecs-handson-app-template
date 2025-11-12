@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Fragments</title>
+</head>
+<body>
+    <!-- アラートメッセージ（成功） -->
+    <div th:fragment="alert-success(message)"
+         th:if="${message}"
+         class="alert alert--success"
+         role="alert"
+         aria-live="polite"
+         th:text="${message}">
+    </div>
+
+    <!-- アラートメッセージ（エラー） -->
+    <div th:fragment="alert-danger(message)"
+         th:if="${message}"
+         class="alert alert--danger"
+         role="alert"
+         aria-live="assertive"
+         th:text="${message}">
+    </div>
+
+    <!-- Material Icons付きページタイトル -->
+    <div th:fragment="page-title(icon, color, text)" class="page-title">
+        <span class="material-icons"
+              th:style="'color: ' + ${color} + ';'"
+              th:text="${icon}"
+              aria-hidden="true">
+        </span>
+        <h1 th:text="${text}"></h1>
+    </div>
+
+    <!-- Material Icons付きページタイトル（大） -->
+    <div th:fragment="page-title-large(icon, color, text)" class="page-title page-title--large">
+        <span class="material-icons"
+              th:style="'color: ' + ${color} + ';'"
+              th:text="${icon}"
+              aria-hidden="true">
+        </span>
+        <h1 th:text="${text}"></h1>
+    </div>
+
+    <!-- Material Icons付きラベル -->
+    <label th:fragment="icon-label(icon, text, for)"
+           class="icon-label"
+           th:for="${for}">
+        <span class="material-icons" th:text="${icon}" aria-hidden="true"></span>
+        <span th:text="${text}"></span>
+    </label>
+
+    <!-- Material Icons付きボタン -->
+    <button th:fragment="icon-button(icon, text, btnClass, ariaLabel)"
+            th:type="${type != null ? type : 'button'}"
+            th:class="${btnClass}"
+            th:aria-label="${ariaLabel != null ? ariaLabel : text}">
+        <span class="material-icons" th:text="${icon}" aria-hidden="true"></span>
+        <span th:text="${text}"></span>
+    </button>
+</body>
+</html>

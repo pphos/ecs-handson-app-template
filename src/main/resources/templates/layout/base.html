@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)" lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">画像メモアプリ</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FF9800'><path d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/></svg>">
+
+    <!-- Open Graph (OGP) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Image Memo - 画像メモ管理アプリ">
+    <meta property="og:description" content="画像とメモを組み合わせて簡単に管理できるWebアプリケーション">
+    <meta property="og:site_name" content="Image Memo">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Image Memo - 画像メモ管理アプリ">
+    <meta name="twitter:description" content="画像とメモを組み合わせて簡単に管理できるWebアプリケーション">
+
+    <!-- Description -->
+    <meta name="description" content="画像とメモを組み合わせて簡単に管理できるWebアプリケーション。写真やスクリーンショットにメモを付けて整理できます。">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <th:block th:replace="${content}"/>
+</body>
+</html>

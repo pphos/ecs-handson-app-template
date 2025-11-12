@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>新規登録 - 画像メモアプリ</title>
+</head>
+<body>
+    <div th:fragment="content" class="container container--narrow">
+        <div th:replace="~{fragments/common :: page-title('person_add', '#FF9800', '新規登録')}"></div>
+
+        <form th:action="@{/register}" method="post" th:object="${user}" aria-labelledby="register-title">
+            <div class="form-group">
+                <label for="username" class="icon-label">
+                    <span class="material-icons" aria-hidden="true">badge</span>
+                    <span>ユーザー名</span>
+                </label>
+                <input type="text"
+                       id="username"
+                       th:field="*{username}"
+                       required
+                       aria-required="true"
+                       aria-describedby="username-error"
+                       autocomplete="username">
+                <div id="username-error"
+                     class="error"
+                     th:if="${#fields.hasErrors('username')}"
+                     th:errors="*{username}"
+                     role="alert">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="icon-label">
+                    <span class="material-icons" aria-hidden="true">lock</span>
+                    <span>パスワード</span>
+                </label>
+                <input type="password"
+                       id="password"
+                       th:field="*{password}"
+                       required
+                       aria-required="true"
+                       aria-describedby="password-error"
+                       autocomplete="new-password">
+                <div id="password-error"
+                     class="error"
+                     th:if="${#fields.hasErrors('password')}"
+                     th:errors="*{password}"
+                     role="alert">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword" class="icon-label">
+                    <span class="material-icons" aria-hidden="true">lock_outline</span>
+                    <span>パスワード（確認）</span>
+                </label>
+                <input type="password"
+                       id="confirmPassword"
+                       th:field="*{confirmPassword}"
+                       required
+                       aria-required="true"
+                       autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn btn--primary btn--full" aria-label="ユーザー登録">
+                <span class="material-icons" aria-hidden="true">how_to_reg</span>
+                登録
+            </button>
+        </form>
+
+        <div class="text-center mt-6">
+            <a href="/login">ログインはこちら</a>
+        </div>
+    </div>
+</body>
+</html>

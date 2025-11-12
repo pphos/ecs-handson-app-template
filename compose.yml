@@ -1,0 +1,91 @@
+services:
+  db:
+    image: postgres:17.5
+    container_name: handson-db
+    environment:
+      POSTGRES_DB: handson
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      # マイグレーション用ユーザーの認証情報（初期化スクリプトで使用）
+      DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:-migration_password}
+      # アプリケーション用ユーザーの認証情報（初期化スクリプトで使用）
+      DB_APP_PASSWORD: ${DB_APP_PASSWORD:-app_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - "db_data:/var/lib/postgresql/data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      # PostgreSQL初期化スクリプト
+      - "./scripts:/docker-entrypoint-initdb.d/scripts:ro"
+      - "./scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d handson"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ローカルでのS3代替 (LocalStack)
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - DEBUG=${DEBUG:-0}
+    volumes:
+      - "localstack_data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./scripts/init-localstack.sh:/etc/localstack/init/ready.d/init-s3.sh"  # 初期化スクリプト
+    healthcheck:
+      test: ["CMD", "awslocal", "s3", "ls"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Flyway専用コンテナ（マイグレーション実行）
+  flyway:
+    container_name: handson-migration
+    build:
+      context: ./migration
+      dockerfile: Dockerfile
+    image: handson-migration:latest
+    command: migrate
+    environment:
+      FLYWAY_URL: jdbc:postgresql://db:5432/handson
+      FLYWAY_USER: handson_migration
+      FLYWAY_PASSWORD: ${DB_MIGRATION_PASSWORD:-migration_password}
+      FLYWAY_BASELINE_ON_MIGRATE: "true"
+      # FLYWAY_LOCATIONS はDockerfile内でデフォルト設定済み（filesystem:/flyway/sql）
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles: ["flyway"]  # 明示的実行用プロファイル
+
+  # Spring Boot アプリケーション
+  app:
+    container_name: handson-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: handson-app:latest
+    profiles: ["app"]  # --profile app 指定時のみ起動
+    depends_on:
+      db:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      # コンテナ環境用の最小限の設定
+      SPRING_PROFILES_ACTIVE: local
+      DB_HOST: db
+      LOCALSTACK_HOST: localstack
+
+volumes:
+  db_data:
+  localstack_data:

@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: handson
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT:5432}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+  flyway:
+    enabled: false
+
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:ap-northeast-1}
+
+# Actuator設定
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# アプリケーション設定
+app:
+  s3:
+    bucket-name: ${AWS_S3_BUCKET_NAME}
+    max-file-size: 10485760  # 10MB
+    allowed-extensions: jpg,jpeg,png,gif
+    cache-max-age: 3600  # 1時間
