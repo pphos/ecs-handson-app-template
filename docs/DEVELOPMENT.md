@@ -96,27 +96,70 @@ make start-container # 全コンテナ起動
 
 ### 環境変数
 
+このアプリケーションは、業界標準の**完全URL方式**で環境変数を設定します。この方式はHeroku、Cloud Run等の主要PaaSプラットフォームで採用されており、12-Factor Appの原則に準拠しています。
+
 #### ローカル開発環境
 
 `application-local.yml`ですべての値が設定済みのため、環境変数不要。
 
 #### 本番環境
 
-**必須環境変数**（デフォルト値なし）:
-```yaml
-DB_HOST: <必須>              # DBホスト名
-DB_NAME: <必須>              # DB名
-DB_USER: <必須>              # アプリケーション用ユーザー
-DB_PASSWORD: <必須>          # パスワード
-DB_MIGRATION_PASSWORD: <必須>  # Flyway用パスワード
-AWS_S3_BUCKET_NAME: <必須>   # S3バケット名
+**アプリケーションコンテナ**:
+```bash
+# 必須環境変数
+JDBC_DATABASE_URL=jdbc:postgresql://host:5432/handson  # データベース接続URL
+JDBC_DATABASE_USERNAME=handson_app                      # アプリケーション用ユーザー
+JDBC_DATABASE_PASSWORD=secret                           # パスワード
+AWS_S3_BUCKET_NAME=my-bucket                            # S3バケット名
+
+# オプション環境変数
+AWS_REGION=ap-northeast-1                               # AWSリージョン（デフォルト: ap-northeast-1）
+SPRING_PROFILES_ACTIVE=production                       # Spring Bootプロファイル
 ```
 
-**オプショナル環境変数**（デフォルト値あり）:
-```yaml
-DB_PORT: 5432                # PostgreSQL標準ポート
-AWS_REGION: ap-northeast-1   # 東京リージョン
+**マイグレーションコンテナ**:
+```bash
+# 必須環境変数
+JDBC_DATABASE_URL=jdbc:postgresql://host:5432/handson   # データベース接続URL
+JDBC_DATABASE_USERNAME=handson_migration                # マイグレーション用ユーザー
+JDBC_DATABASE_PASSWORD=secret                           # パスワード
 ```
+
+#### データベースユーザー権限分離
+
+セキュリティベストプラクティスとして、2つのデータベースユーザーを使い分けています：
+
+| ユーザー名 | 用途 | 権限 | 使用箇所 |
+|-----------|------|------|---------|
+| `handson_migration` | Flywayマイグレーション | DDL権限（CREATE, DROP, ALTER） | マイグレーションコンテナ |
+| `handson_app` | アプリケーション実行 | DML権限のみ（SELECT, INSERT, UPDATE, DELETE） | アプリケーションコンテナ |
+
+**セキュリティメリット**:
+- アプリケーションから誤ってテーブルを削除・変更できない
+- SQLインジェクション対策（DROP TABLEなどのDDL攻撃を防止）
+- 本番環境でアプリがスキーマを変更できない
+
+#### 実装詳細
+
+**application.yml**での設定:
+```yaml
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+```
+
+**compose.yml**でのFlyway設定:
+```yaml
+flyway:
+  environment:
+    FLYWAY_URL: ${JDBC_DATABASE_URL:-jdbc:postgresql://db:5432/handson}
+    FLYWAY_USER: ${JDBC_DATABASE_USERNAME:-handson_migration}
+    FLYWAY_PASSWORD: ${JDBC_DATABASE_PASSWORD:-migration_password}
+```
+
+デフォルト値はローカル開発環境用に設定されており、本番環境では環境変数で上書きします。
 
 ## テスト戦略
 

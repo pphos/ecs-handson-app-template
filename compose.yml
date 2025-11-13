@@ -55,9 +55,9 @@ services:
     image: handson-migration:latest
     command: migrate
     environment:
-      FLYWAY_URL: jdbc:postgresql://db:5432/handson
-      FLYWAY_USER: handson_migration
-      FLYWAY_PASSWORD: ${DB_MIGRATION_PASSWORD:-migration_password}
+      FLYWAY_URL: ${JDBC_DATABASE_URL:-jdbc:postgresql://db:5432/handson}
+      FLYWAY_USER: ${JDBC_DATABASE_USERNAME:-handson_migration}
+      FLYWAY_PASSWORD: ${JDBC_DATABASE_PASSWORD:-migration_password}
       FLYWAY_BASELINE_ON_MIGRATE: "true"
       # FLYWAY_LOCATIONS はDockerfile内でデフォルト設定済み（filesystem:/flyway/sql）
     depends_on:
@@ -83,7 +83,6 @@ services:
     environment:
       # コンテナ環境用の最小限の設定
       SPRING_PROFILES_ACTIVE: local
-      DB_HOST: db
       LOCALSTACK_HOST: localstack
 
 volumes:

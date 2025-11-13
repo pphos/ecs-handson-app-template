@@ -359,6 +359,52 @@ docker exec localstack awslocal s3 ls
 - `src/main/resources/templates/fragments/common.html`: 再利用可能なUIフラグメント
 - `src/main/resources/templates/memos/`: 画像メモ関連ビュー
 
+## 環境変数設定
+
+このアプリケーションは、業界標準の**完全URL方式**で環境変数を設定します。この方式はHeroku、Cloud Run等の主要PaaSプラットフォームで採用されており、12-Factor Appの原則に準拠しています。
+
+### アプリケーションコンテナの環境変数
+
+**必須環境変数**:
+```bash
+JDBC_DATABASE_URL=jdbc:postgresql://host:5432/handson  # データベース接続URL
+JDBC_DATABASE_USERNAME=handson_app                      # アプリケーション用ユーザー
+JDBC_DATABASE_PASSWORD=secret                           # パスワード
+AWS_S3_BUCKET_NAME=my-bucket                            # S3バケット名
+```
+
+**オプション環境変数**:
+```bash
+AWS_REGION=ap-northeast-1      # AWSリージョン（デフォルト: ap-northeast-1）
+SPRING_PROFILES_ACTIVE=production  # Spring Bootプロファイル
+```
+
+### マイグレーションコンテナの環境変数
+
+**必須環境変数**:
+```bash
+JDBC_DATABASE_URL=jdbc:postgresql://host:5432/handson   # データベース接続URL
+JDBC_DATABASE_USERNAME=handson_migration                # マイグレーション用ユーザー
+JDBC_DATABASE_PASSWORD=secret                           # パスワード
+```
+
+### データベースユーザー権限分離
+
+セキュリティベストプラクティスとして、2つのデータベースユーザーを使い分けています：
+
+| ユーザー名 | 用途 | 権限 | 使用箇所 |
+|-----------|------|------|---------|
+| `handson_migration` | Flywayマイグレーション | DDL権限（CREATE, DROP, ALTER） | マイグレーションコンテナ |
+| `handson_app` | アプリケーション実行 | DML権限のみ（SELECT, INSERT, UPDATE, DELETE） | アプリケーションコンテナ |
+
+### セキュリティ推奨事項
+
+- **機密情報の管理**: パスワードは環境変数またはシークレット管理サービスで管理
+- **IAMロール活用**: クラウド環境ではIAMロールを使用してS3アクセス権限を付与（アクセスキー不要）
+- **最小権限の原則**: データベースユーザーは必要最小限の権限のみ付与
+
+詳細: [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)
+
 ## コーディング規約（簡易版）
 
 ### Lombokアノテーション

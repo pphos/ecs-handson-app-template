@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:5432/handson
+    url: jdbc:postgresql://localhost:5432/handson
     username: handson_app
     password: app_password
 
