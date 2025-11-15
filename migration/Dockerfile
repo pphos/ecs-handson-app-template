@@ -9,4 +9,4 @@ WORKDIR /flyway
 # デフォルト環境変数（イメージにSQLが含まれているため固定パス）
 ENV FLYWAY_LOCATIONS=filesystem:/flyway/sql
 
-# デフォルトコマンドはFlyway公式イメージのまま（entrypoint経由）
+CMD ["migrate"]
