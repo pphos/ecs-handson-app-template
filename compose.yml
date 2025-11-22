@@ -71,6 +71,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    platform: linux/amd64
     image: handson-app:latest
     profiles: ["app"]  # --profile app 指定時のみ起動
     depends_on:
@@ -81,9 +82,14 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # コンテナ環境用の最小限の設定
+      # コンテナ環境用の設定
       SPRING_PROFILES_ACTIVE: local
       LOCALSTACK_HOST: localstack
+      # Docker環境用のDB接続情報
+      JDBC_DATABASE_URL: jdbc:postgresql://db:5432/handson
+      JDBC_DATABASE_USERNAME: handson_app
+      JDBC_DATABASE_PASSWORD: ${DB_APP_PASSWORD:-app_password}
+      AWS_S3_BUCKET_NAME: image-memo-bucket
 
 volumes:
   db_data:

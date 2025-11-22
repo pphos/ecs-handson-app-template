@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/handson
-    username: handson_app
-    password: app_password
+    url: ${JDBC_DATABASE_URL:jdbc:postgresql://localhost:5432/handson}
+    username: ${JDBC_DATABASE_USERNAME:handson_app}
+    password: ${JDBC_DATABASE_PASSWORD:app_password}
 
   cloud:
     aws:
@@ -18,7 +18,7 @@ spring:
 # ローカル開発環境用のS3設定
 app:
   s3:
-    bucket-name: handson-app-bucket
+    bucket-name: ${AWS_S3_BUCKET_NAME:handson-app-bucket}
     max-file-size: 10485760  # 10MB
     allowed-extensions: jpg,jpeg,png,gif
     cache-max-age: 3600  # 1時間
