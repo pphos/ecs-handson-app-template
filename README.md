@@ -25,7 +25,7 @@
 
 ```bash
 git clone <repository-url>
-cd ecs-handson-sample-app
+cd ecs-handson-app-template
 ```
 
 ### 2. アプリケーションの起動（3ステップ）
