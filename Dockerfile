@@ -1,10 +1,7 @@
 # ========================================
 # Stage 1: Build
 # ========================================
-FROM public.ecr.aws/docker/library/gradle:9.2.0-jdk-25-and-25-alpine AS builder
-
-# Alpine Linuxに必要なユーティリティをインストール（Gradle wrapper用）
-RUN apk add --no-cache findutils
+FROM public.ecr.aws/docker/library/gradle:9.2.0-jdk-25-and-25-corretto AS builder
 
 WORKDIR /app
 
