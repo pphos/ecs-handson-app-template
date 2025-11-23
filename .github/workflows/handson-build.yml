@@ -9,46 +9,16 @@ permissions:
 
 env:
   AWS_REGION: ap-northeast-1
-  ECR_REPOSITORY: handson/app
-  DOCKERFILE_PATH: Dockerfile
+
+  APP_ECR_REPOSITORY: handson/app
+  APP_DOCKERFILE_PATH: Dockerfile
+  MIGRATION_ECR_REPOSITORY: handson/migration
+  MIGRATION_DOCKERFILE_PATH: migration/Dockerfile
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: develop
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          role-to-assume: ${{ secrets.AWS_ECR_PUSH_ROLE }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Mask sensitive values
-        run: |
-          echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        with:
-          context: .
-          file: ${{ env.DOCKERFILE_PATH }}
-          push: true
-          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          provenance: false
+      - name: Dummy Step
+        run: echo "run build workflow"

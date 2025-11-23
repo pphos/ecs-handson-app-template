@@ -1,0 +1,29 @@
+name: Deploy app to ECS
+
+on:
+  workflow_dispatch:
+    inputs:
+      image-tag:
+        description: "Image tag to deploy (e.g., latest, commit SHA)"
+        required: true
+        default: "latest"
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-1
+
+  ECS_CLUSTER: handson-app-cluster
+  ECS_TASK_DEFINITION: handson-migration-taskdef
+  CONTAINER_NAME: migration
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Dummy Step
+        run: echo "run migration deploy workflow"
