@@ -1,4 +1,4 @@
-name: Deploy app to ECS
+name: Deploy migration to ECS
 
 on:
   workflow_dispatch:
@@ -16,12 +16,12 @@ permissions:
 env:
   AWS_REGION: ap-northeast-1
 
-  ECS_CLUSTER: handson-app-cluster
+  ECS_CLUSTER: handson-cluster
   ECS_TASK_DEFINITION: handson-migration-taskdef
   CONTAINER_NAME: migration
 
 jobs:
-  build:
+  migration-deploy:
     runs-on: ubuntu-latest
 
     steps:

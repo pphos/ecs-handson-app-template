@@ -17,12 +17,12 @@ env:
   AWS_REGION: ap-northeast-1
 
   ECS_SERVICE: handson-app-service
-  ECS_CLUSTER: handson-app-cluster
+  ECS_CLUSTER: handson-cluster
   ECS_TASK_DEFINITION: handson-app-taskdef
   CONTAINER_NAME: app
 
 jobs:
-  build:
+  app-deploy:
     runs-on: ubuntu-latest
 
     steps:
